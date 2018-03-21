@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import './Note.css';
+import Remarkable from 'remarkable';
 
 class Note extends Component {
+    getRawMarkup () {
+        const md = new Remarkable();
+        return { __html: md.render(this.props.text) };
+    }
+
     render () {
-        const date = new Date(this.props.date);
-        const formatedDate = date.toLocaleString();
+        const formatedDate = (new Date(this.props.date)).toLocaleString();
         return (
             <div>
                 <hr className="Note-hr" />
                 <div className="Note-row row">
-                    <div className="nine columns">
-                        <p>{this.props.text}</p>
+                <div className="nine columns">
+                        <p dangerouslySetInnerHTML={ this.getRawMarkup() } />
                     </div>
                     <div className="three columns">
                         <button onClick={ () => this.props.handleDeleteNote(this.props.date) }>Delete</button>

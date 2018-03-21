@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import './NoteForm.css';
 
 class NoteForm extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            value: 'Add a note in plaintext',
+            value: 'Add a note in **markdown**',
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
