@@ -15,7 +15,7 @@ class Note extends Component {
 
   render() {
     const { note } = this.props;
-    const formatedDate = new Date(note.date).toLocaleString();
+    const formatedDate = new Date(note.createdAt).toLocaleString();
     return (
       <div>
         <hr className="Note-hr" />
