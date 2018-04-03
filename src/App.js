@@ -12,18 +12,15 @@ class App extends Component {
   };
 
   handleAddNote = note => {
-    // this.setState({
-    //     notes: [...this.state.notes, note]
-    // })
     this.setState(prevState => {
-      const notes = [...prevState.notes, note];
+      const notes = [note, ...prevState.notes];
       return { notes };
     });
   };
 
-  handleDeleteNote = date => {
+  handleDeleteNote = id => {
     this.setState(prevState => {
-      const notes = prevState.notes.filter(oldNote => oldNote.date !== date);
+      const notes = prevState.notes.filter(oldNote => oldNote.id !== id);
       return { notes };
     });
   };

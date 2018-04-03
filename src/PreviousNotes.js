@@ -2,15 +2,11 @@ import React, { Component, Fragment } from 'react';
 import Note from './Note';
 
 class PreviousNotes extends Component {
-  renderNote = (note) => {
+  renderNote = note => {
     return (
-      <Note
-        note={note}
-        onDeleteNote={this.props.onDeleteNote}
-        key={note.date}
-      />
-    )
-  }
+      <Note key={note.id} note={note} onDeleteNote={this.props.onDeleteNote} />
+    );
+  };
 
   render() {
     return (

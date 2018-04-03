@@ -4,6 +4,7 @@ let nextId = 0;
 
 class NoteForm extends Component {
   state = {
+    nextId: 0,
     value: 'Add a note in **markdown**',
   };
 
@@ -11,10 +12,11 @@ class NoteForm extends Component {
     event.preventDefault();
 
     this.props.onAddNote({
-      text: this.state.value,
       date: Date.now(),
       id: ++nextId,
+      text: this.state.value,
     });
+
     this.setState({ value: '' });
   };
 
