@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 
+import { StateConsumer } from './State';
+
 let nextId = 0;
 
-class NoteForm extends Component {
+export class NoteForm extends Component {
   state = {
-    nextId: 0,
     value: 'Add a note in **markdown**',
   };
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     event.preventDefault();
 
-    this.props.onAddNote({
+    this.props.addNote({
       date: Date.now(),
       id: ++nextId,
       text: this.state.value,
@@ -40,4 +41,14 @@ class NoteForm extends Component {
   }
 }
 
-export default NoteForm;
+class NoteFormWithState extends Component {
+  render() {
+    return (
+      <StateConsumer>
+        {appState => <NoteForm addNote={appState.addNote} />}
+      </StateConsumer>
+    );
+  }
+}
+
+export default NoteFormWithState;

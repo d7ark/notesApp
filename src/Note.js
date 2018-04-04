@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import Remarkable from 'remarkable';
 
@@ -8,8 +9,8 @@ class Note extends Component {
   }
 
   handleDelete = () => {
-    const { note, onDeleteNote } = this.props;
-    onDeleteNote(note.id);
+    const { note, onDelete } = this.props;
+    onDelete(note.id);
   };
 
   render() {
@@ -26,7 +27,9 @@ class Note extends Component {
             <button onClick={this.handleDelete}>Delete</button>
           </div>
         </div>
-        <p className="Note-foot">Created {formatedDate}</p>
+        <Link to={`/notes/${note.id}`}>
+          <p className="Note-foot">Created {formatedDate}</p>
+        </Link>
       </div>
     );
   }
