@@ -11,10 +11,12 @@ export class NoteForm extends Component {
 
   textInput = React.createRef();
 
-  componentDidMount () {
+  componentDidMount() {
     const currentTextInput = this.textInput.current;
-    currentTextInput.focus();
-    currentTextInput.setSelectionRange(0, currentTextInput.value.length);
+    if(currentTextInput) {
+      currentTextInput.focus();
+      currentTextInput.setSelectionRange(0, currentTextInput.value.length);
+    }
   }
 
   handleSubmit = event => {
@@ -27,7 +29,9 @@ export class NoteForm extends Component {
     });
 
     this.setState({ value: '' });
-    this.textInput.current.focus();
+    if(this.textInput.current) {
+      this.textInput.current.focus();
+    }
   };
 
   handleChange = event => {

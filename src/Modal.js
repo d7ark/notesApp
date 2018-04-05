@@ -21,11 +21,11 @@ class Modal extends Component {
   };
 
   componentDidMount() {
-    window.addEventListener('keydown', this.listenKeyCombination, true);
+    window.addEventListener('keydown', this.listenKeyCombination, false);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenKeyCombination, true);
+    window.removeEventListener('keydown', this.listenKeyCombination, false);
   }
 
   render() {
