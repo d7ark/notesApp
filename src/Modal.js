@@ -3,6 +3,8 @@ import ReactModal from 'react-modal';
 
 import NoteForm from './NoteForm';
 
+const M_CODE_POINTS = new Set(['m'.codePointAt(0), 'M'.codePointAt(0)]);
+
 class Modal extends Component {
   state = {
     open: false,
@@ -12,20 +14,19 @@ class Modal extends Component {
     this.setState({ open: false });
   };
 
-  listenKeyCombination = event => {
-    const mCodePoints = ['m'.codePointAt(0), 'M'.codePointAt(0)];
-    if (event.ctrlKey && mCodePoints.indexOf(event.keyCode) !== -1) {
+  handleKeyDown = event => {
+    if (event.ctrlKey && M_CODE_POINTS.has(event.keyCode)) {
       event.preventDefault();
       this.setState({ open: true });
     }
   };
 
   componentDidMount() {
-    window.addEventListener('keydown', this.listenKeyCombination, false);
+    window.addEventListener('keydown', this.handleKeyDown, false);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenKeyCombination, false);
+    window.removeEventListener('keydown', this.handleKeyDown, false);
   }
 
   render() {

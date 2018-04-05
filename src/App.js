@@ -12,11 +12,11 @@ class App extends Component {
   render() {
     return (
       <div className="App container">
-        <Modal />
         <Switch>
           <Route exact path="/notes/:noteId" component={NotePage} />
           <Route exact path="/" component={NotesPage} />
         </Switch>
+        <Modal />
       </div>
     );
   }
