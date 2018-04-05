@@ -28,7 +28,7 @@ class State extends React.Component {
   getNoteById = id => {
     id = Number(id);
     return this.state.notes.find(note => note.id === id);
-  }
+  };
 
   render() {
     return (

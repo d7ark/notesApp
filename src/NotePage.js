@@ -13,7 +13,7 @@ export class NotePage extends Component {
     if (!note) {
       return <p>Nie ma takiej podstrony. 404.</p>;
     }
-    return <Note key={note.id} note={note} onDelete={this.handleDelete} />;
+    return <Note note={note} onDelete={this.handleDelete} />;
   }
 }
 

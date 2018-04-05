@@ -21,7 +21,7 @@ class Note extends Component {
         <hr className="Note-hr" />
         <div className="Note-row row">
           <div className="nine columns">
-            <p dangerouslySetInnerHTML={this.getRawMarkup()} />
+            <div dangerouslySetInnerHTML={this.getRawMarkup()} />
           </div>
           <div className="three columns">
             <button onClick={this.handleDelete}>Delete</button>

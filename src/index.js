@@ -6,8 +6,10 @@ import App from './App';
 import State from './State';
 
 ReactDOM.render(
-    <Router>
-        <State>
-            <App />
-        </State>
-    </Router>, document.getElementById('root'));
+  <Router>
+    <State>
+      <App />
+    </State>
+  </Router>,
+  document.getElementById('root')
+);

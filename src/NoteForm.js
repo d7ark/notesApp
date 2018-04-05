@@ -9,7 +9,7 @@ export class NoteForm extends Component {
     value: 'Add a note in **markdown**',
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = event => {
     event.preventDefault();
 
     this.props.addNote({
