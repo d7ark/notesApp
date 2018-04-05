@@ -9,6 +9,14 @@ export class NoteForm extends Component {
     value: 'Add a note in **markdown**',
   };
 
+  textInput = React.createRef();
+
+  componentDidMount () {
+    const currentTextInput = this.textInput.current;
+    currentTextInput.focus();
+    currentTextInput.setSelectionRange(0, currentTextInput.value.length);
+  }
+
   handleSubmit = event => {
     event.preventDefault();
 
@@ -19,6 +27,7 @@ export class NoteForm extends Component {
     });
 
     this.setState({ value: '' });
+    this.textInput.current.focus();
   };
 
   handleChange = event => {
@@ -32,6 +41,7 @@ export class NoteForm extends Component {
           <textarea
             className="NoteForm-textArea"
             onChange={this.handleChange}
+            ref={this.textInput}
             value={this.state.value}
           />
         </label>
