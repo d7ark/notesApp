@@ -9,8 +9,8 @@ class Note extends Component {
   }
 
   handleDelete = () => {
-    const { note, onDelete } = this.props;
-    onDelete(note.id);
+    // const { note, onDelete } = this.props;
+    // onDelete(note.id);
   };
 
   render() {

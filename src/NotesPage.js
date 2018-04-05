@@ -1,13 +1,15 @@
+import gql from 'graphql-tag';
 import React, { Component } from 'react';
+import { Query } from 'react-apollo';
 
 import NoteForm from './NoteForm';
 import PreviousNotes from './PreviousNotes';
-import { StateConsumer } from './State';
+
+//TODO: NoteForm shouldnt wait for previous notes
 
 class NotesPage extends Component {
   render() {
-    const { appState } = this.props;
-    const notes = appState.getAllNotes();
+    const notes = this.props.notes || [];
     return (
       <div>
         <header className="App-header">
@@ -17,8 +19,8 @@ class NotesPage extends Component {
         {!!notes.length && (
           <PreviousNotes
             notes={notes}
-            onDelete={appState.deleteNoteById}
-            onDeleteAll={appState.deleteAllNotes}
+            onDelete={this.onDeleteAllNotes}
+            onDeleteAll={this.onDeleteNote}
           />
         )}
       </div>
@@ -28,11 +30,27 @@ class NotesPage extends Component {
 
 class NotesPageWithState extends React.Component {
   render() {
-    return (
-      <StateConsumer>
-        {appState => <NotesPage appState={appState} />}
-      </StateConsumer>
+    const SavedNotes = () => (
+      <Query
+        query={gql`
+          {
+            notes {
+              createdAt
+              id
+              text
+            }
+          }
+        `}
+      >
+        {({ loading, error, data }) => {
+          if (loading) return <p>loading ... </p>;
+          if (error) return <p>error occured</p>;
+
+          return <NotesPage notes={data.notes} />;
+        }}
+      </Query>
     );
+    return <SavedNotes {...this.props} />;
   }
 }
 
