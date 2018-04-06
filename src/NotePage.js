@@ -1,7 +1,10 @@
+import gql from 'graphql-tag';
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
+import { Query } from 'react-apollo';
 
 import Note from './Note';
-import { StateConsumer } from './State';
+import { NoteFormForEditting } from './NoteForm';
 
 export class NotePage extends Component {
   handleDelete = noteId => {
@@ -13,22 +16,48 @@ export class NotePage extends Component {
     if (!note) {
       return <p>Nie ma takiej podstrony. 404.</p>;
     }
-    return <Note note={note} onDelete={this.handleDelete} />;
+    return (
+      <div>
+        <Note note={note} onDelete={this.handleDelete} />
+        <Route
+          exact
+          path={this.props.match.path + '/edit'}
+          component={NoteFormForEditting}
+        />
+      </div>
+    );
   }
 }
+
+const GET_NOTE = gql`
+  query note($id: String!) {
+    note(id: $id) {
+      id
+      createdAt
+      text
+    }
+  }
+`;
 
 class NotePageWithState extends Component {
   render() {
     return (
-      <StateConsumer>
-        {appState => (
-          <NotePage
-            {...this.props}
-            deleteNoteById={appState.deleteNoteById}
-            note={appState.getNoteById(this.props.match.params.noteId)}
-          />
-        )}
-      </StateConsumer>
+      <Query
+        query={GET_NOTE}
+        variables={{ id: this.props.match.params.noteId }}
+      >
+        {({ loading, error, data }) => {
+          if (loading) return <p>loading ...</p>;
+          if (error) return <p>error occured</p>;
+          return (
+            <NotePage
+              {...this.props}
+              deleteNoteById={() => {}}
+              note={data.note}
+            />
+          );
+        }}
+      </Query>
     );
   }
 }

@@ -9,8 +9,8 @@ class Note extends Component {
   }
 
   handleDelete = () => {
-    // const { note, onDelete } = this.props;
-    // onDelete(note.id);
+    const { note, onDelete } = this.props;
+    onDelete({ variables: { id: note.id } });
   };
 
   render() {
@@ -25,6 +25,9 @@ class Note extends Component {
           </div>
           <div className="three columns">
             <button onClick={this.handleDelete}>Delete</button>
+            <Link to={`/notes/${note.id}/edit`}>
+              <button>Edit</button>
+            </Link>
           </div>
         </div>
         <Link to={`/notes/${note.id}`}>

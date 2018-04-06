@@ -1,8 +1,6 @@
+import gql from 'graphql-tag';
+import { Mutation } from 'react-apollo';
 import React, { Component } from 'react';
-
-import { StateConsumer } from './State';
-
-let nextId = 0;
 
 export class NoteForm extends Component {
   state = {
@@ -13,7 +11,7 @@ export class NoteForm extends Component {
 
   componentDidMount() {
     const currentTextInput = this.textInput.current;
-    if(currentTextInput) {
+    if (currentTextInput) {
       currentTextInput.focus();
       currentTextInput.setSelectionRange(0, currentTextInput.value.length);
     }
@@ -22,14 +20,12 @@ export class NoteForm extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    this.props.addNote({
-      date: Date.now(),
-      id: ++nextId,
+    this.props.onSubmit({
       text: this.state.value,
     });
 
     this.setState({ value: '' });
-    if(this.textInput.current) {
+    if (this.textInput.current) {
       this.textInput.current.focus();
     }
   };
@@ -55,12 +51,54 @@ export class NoteForm extends Component {
   }
 }
 
+const CREATE_NOTE_MUTATION = gql`
+  mutation CreateNoteMutation($input: NoteInput!) {
+    createNote(input: $input) {
+      note {
+        id
+        createdAt
+        text
+      }
+    }
+  }
+`;
+
 class NoteFormWithState extends Component {
   render() {
     return (
-      <StateConsumer>
-        {appState => <NoteForm addNote={appState.addNote} />}
-      </StateConsumer>
+      <Mutation mutation={CREATE_NOTE_MUTATION}>
+        {createNoteBase => {
+          const createNote = input => createNoteBase({ variables: { input } });
+          return <NoteForm onSubmit={createNote} />;
+        }}
+      </Mutation>
+    );
+  }
+}
+
+const UPDATE_NOTE_MUTATION = gql`
+  mutation UpdateNoteMutation($id: String!, $input: NoteInput!) {
+    updateNote(id: $id, input: $input) {
+      note {
+        id
+        createdAt
+        text
+      }
+    }
+  }
+`;
+
+// TODO: change button text
+// TODO: decorate data sent in handleSubmit to contain id + input
+// TODO: sent noteId down or think of better way
+export class NoteFormForEditting extends Component {
+  render() {
+    return (
+      <Mutation mutation={UPDATE_NOTE_MUTATION}>
+        {updateNote => (
+          <NoteForm onSubmit={updateNote} startValue={this.props.startValue} />
+        )}
+      </Mutation>
     );
   }
 }
