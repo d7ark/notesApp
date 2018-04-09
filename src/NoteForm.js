@@ -17,6 +17,14 @@ export class NoteForm extends Component {
     }
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const nextValue = nextProps.note ? nextProps.note.text : '';
+    if (nextValue === prevState.value) {
+      return null;
+    }
+    return { value: nextValue };
+  }
+
   handleSubmit = event => {
     event.preventDefault();
 
@@ -45,7 +53,10 @@ export class NoteForm extends Component {
             value={this.state.value}
           />
         </label>
-        <input type="submit" value="Add note" />
+        <input
+          type="submit"
+          value={this.props.buttonText ? this.props.buttonText : 'Add note'}
+        />
       </form>
     );
   }
@@ -88,16 +99,37 @@ const UPDATE_NOTE_MUTATION = gql`
   }
 `;
 
-// TODO: change button text
-// TODO: decorate data sent in handleSubmit to contain id + input
-// TODO: sent noteId down or think of better way
 export class NoteFormForEditting extends Component {
   render() {
     return (
       <Mutation mutation={UPDATE_NOTE_MUTATION}>
-        {updateNote => (
-          <NoteForm onSubmit={updateNote} startValue={this.props.startValue} />
-        )}
+        {updateNoteBase => {
+          const updateNote = input =>
+            updateNoteBase({
+              variables: {
+                id: this.props.note.id,
+                input: { text: input.text },
+              },
+              optimisticResponse: {
+                __typename: 'Mutation',
+                updateNote: {
+                  __typename: 'UpdateNotePayload',
+                  note: {
+                    __typename: 'Note',
+                    id: this.props.note.id,
+                    text: input.text,
+                  },
+                },
+              },
+            });
+          return (
+            <NoteForm
+              buttonText="Save note"
+              note={this.props.note}
+              onSubmit={updateNote}
+            />
+          );
+        }}
       </Mutation>
     );
   }

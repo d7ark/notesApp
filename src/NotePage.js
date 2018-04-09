@@ -22,7 +22,7 @@ export class NotePage extends Component {
         <Route
           exact
           path={this.props.match.path + '/edit'}
-          component={NoteFormForEditting}
+          render={() => <NoteFormForEditting note={note} />}
         />
       </div>
     );
