@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import React, { Component } from 'react';
 
+import { GET_NOTES_QUERY } from './queries';
+
 export class NoteForm extends Component {
   state = {
     value: 'Add a note in **markdown**',
@@ -79,7 +81,25 @@ class NoteFormWithState extends Component {
     return (
       <Mutation mutation={CREATE_NOTE_MUTATION}>
         {createNoteBase => {
-          const createNote = input => createNoteBase({ variables: { input } });
+          const createNote = input =>
+            createNoteBase({
+              variables: { input },
+              update: (store, { data: { createNote: createNoteResponse } }) => {
+                let notesQuery;
+                try {
+                  notesQuery = store.readQuery({ query: GET_NOTES_QUERY });
+                } catch (error) {
+                  // empty
+                }
+                if (notesQuery) {
+                  notesQuery.notes.push(createNoteResponse.note);
+                  store.writeQuery({
+                    query: GET_NOTES_QUERY,
+                    data: notesQuery,
+                  });
+                }
+              },
+            });
           return <NoteForm onSubmit={createNote} />;
         }}
       </Mutation>

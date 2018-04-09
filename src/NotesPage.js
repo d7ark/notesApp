@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import React, { Component } from 'react';
 import { Mutation, Query } from 'react-apollo';
 
+import { GET_NOTES_QUERY } from './queries';
 import NoteForm from './NoteForm';
 import PreviousNotes from './PreviousNotes';
 
@@ -30,20 +31,10 @@ class NotesPage extends Component {
   }
 }
 
-const GET_NOTES = gql`
-  {
-    notes {
-      id
-      createdAt
-      text
-    }
-  }
-`;
-
 class NotesPageWithState extends React.Component {
   render() {
     return (
-      <Query query={GET_NOTES}>
+      <Query query={GET_NOTES_QUERY}>
         {({ loading, error, data }) => {
           if (loading) return <p>loading ... </p>;
           if (error) return <p>error occured</p>;
@@ -66,9 +57,30 @@ class NotesPageWithStateAndMutation extends React.Component {
   render() {
     return (
       <Mutation mutation={DELETE_NOTE_MUTATION}>
-        {deleteNote => (
-          <NotesPageWithState deleteNote={deleteNote} {...this.props} />
-        )}
+        {deleteNoteBase => {
+          const deleteNote = input =>
+            deleteNoteBase({
+              variables: input,
+              update: (store, { data: { deleteNote: deleteNoteResponse } }) => {
+                let notesQuery;
+                try {
+                  notesQuery = store.readQuery({ query: GET_NOTES_QUERY });
+                } catch (error) {
+                  // empty
+                }
+                if (notesQuery) {
+                  notesQuery.notes = notesQuery.notes.filter(
+                    note => note.id !== deleteNoteResponse.deletedId
+                  );
+                  store.writeQuery({
+                    query: GET_NOTES_QUERY,
+                    data: notesQuery,
+                  });
+                }
+              },
+            });
+          return <NotesPageWithState deleteNote={deleteNote} {...this.props} />;
+        }}
       </Mutation>
     );
   }

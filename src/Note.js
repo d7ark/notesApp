@@ -10,7 +10,7 @@ class Note extends Component {
 
   handleDelete = () => {
     const { note, onDelete } = this.props;
-    onDelete({ variables: { id: note.id } });
+    onDelete({ id: note.id });
   };
 
   render() {
@@ -24,7 +24,7 @@ class Note extends Component {
             <div dangerouslySetInnerHTML={this.getRawMarkup()} />
           </div>
           <div className="three columns">
-            <button onClick={this.handleDelete}>Delete</button>
+            <button onClick={this.handleDelete}>Delete</button>{' '}
             <Link to={`/notes/${note.id}/edit`}>
               <button>Edit</button>
             </Link>
