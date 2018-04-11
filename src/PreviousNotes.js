@@ -8,6 +8,7 @@ class PreviousNotes extends Component {
   );
 
   render() {
+    let notes = [...this.props.notes];
     return (
       <Fragment>
         <div className="row">
@@ -18,7 +19,11 @@ class PreviousNotes extends Component {
             <button onClick={this.props.onDeleteAll}>Delete all</button>
           </div>
         </div>
-        <div>{this.props.notes.map(this.renderNote)}</div>
+        <div>
+          {notes
+            .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+            .map(this.renderNote)}
+        </div>
       </Fragment>
     );
   }

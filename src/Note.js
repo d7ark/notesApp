@@ -10,21 +10,24 @@ class Note extends Component {
 
   handleDelete = () => {
     const { note, onDelete } = this.props;
-    onDelete(note.id);
+    onDelete({ id: note.id });
   };
 
   render() {
     const { note } = this.props;
-    const formatedDate = new Date(note.date).toLocaleString();
+    const formatedDate = new Date(note.createdAt).toLocaleString();
     return (
       <div>
         <hr className="Note-hr" />
         <div className="Note-row row">
           <div className="nine columns">
-            <div dangerouslySetInnerHTML={this.getRawMarkup()} />
+            <div className="dangerousInnerHTML" dangerouslySetInnerHTML={this.getRawMarkup()} />
           </div>
           <div className="three columns">
-            <button onClick={this.handleDelete}>Delete</button>
+            <button onClick={this.handleDelete}>Delete</button>{' '}
+            <Link to={`/notes/${note.id}/edit`}>
+              <button>Edit</button>
+            </Link>
           </div>
         </div>
         <Link to={`/notes/${note.id}`}>

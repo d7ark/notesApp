@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders component with markdown correctly 1`] = `
+<div>
+  <div>
+    <hr
+      class="Note-hr"
+    />
+    <div
+      class="Note-row row"
+    >
+      <div
+        class="nine columns"
+      >
+        <div
+          class="dangerousInnerHTML"
+        >
+          <p>
+            Sample text 
+            <strong>
+              with
+            </strong>
+            markdown
+          </p>
+        </div>
+      </div>
+      <div
+        class="three columns"
+      >
+        <button>
+          Delete
+        </button>
+        <a
+          href="/notes/123123/edit"
+        >
+          <button>
+            Edit
+          </button>
+        </a>
+      </div>
+    </div>
+    <a
+      href="/notes/123123"
+    >
+      <p
+        class="Note-foot"
+      >
+        Created 
+        8/8/1989, 12:00:00 AM
+      </p>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`renders component without markdown correctly 1`] = `
+<div>
+  <div>
+    <hr
+      class="Note-hr"
+    />
+    <div
+      class="Note-row row"
+    >
+      <div
+        class="nine columns"
+      >
+        <div
+          class="dangerousInnerHTML"
+        >
+          <p>
+            Sample text without markdown.
+          </p>
+        </div>
+      </div>
+      <div
+        class="three columns"
+      >
+        <button>
+          Delete
+        </button>
+        <a
+          href="/notes/123123/edit"
+        >
+          <button>
+            Edit
+          </button>
+        </a>
+      </div>
+    </div>
+    <a
+      href="/notes/123123"
+    >
+      <p
+        class="Note-foot"
+      >
+        Created 
+        8/8/1989, 12:00:00 AM
+      </p>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`renders markdown correctly 1`] = `
+<div
+  class="dangerousInnerHTML"
+>
+  <p>
+    Sample text 
+    <strong>
+      with
+    </strong>
+    <em>
+      many
+    </em>
+    markdowns
+  </p>
+</div>
+`;

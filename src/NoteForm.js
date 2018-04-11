@@ -1,8 +1,8 @@
+import gql from 'graphql-tag';
+import { Mutation } from 'react-apollo';
 import React, { Component } from 'react';
 
-import { StateConsumer } from './State';
-
-let nextId = 0;
+import { GET_NOTES_QUERY } from './queries';
 
 export class NoteForm extends Component {
   state = {
@@ -13,23 +13,29 @@ export class NoteForm extends Component {
 
   componentDidMount() {
     const currentTextInput = this.textInput.current;
-    if(currentTextInput) {
+    if (currentTextInput) {
       currentTextInput.focus();
       currentTextInput.setSelectionRange(0, currentTextInput.value.length);
     }
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const nextValue = nextProps.note ? nextProps.note.text : '';
+    if (nextValue === prevState.value) {
+      return null;
+    }
+    return { value: nextValue };
+  }
+
   handleSubmit = event => {
     event.preventDefault();
 
-    this.props.addNote({
-      date: Date.now(),
-      id: ++nextId,
+    this.props.onSubmit({
       text: this.state.value,
     });
 
     this.setState({ value: '' });
-    if(this.textInput.current) {
+    if (this.textInput.current) {
       this.textInput.current.focus();
     }
   };
@@ -49,18 +55,103 @@ export class NoteForm extends Component {
             value={this.state.value}
           />
         </label>
-        <input type="submit" value="Add note" />
+        <input
+          type="submit"
+          value={this.props.buttonText ? this.props.buttonText : 'Add note'}
+        />
       </form>
     );
   }
 }
 
+const CREATE_NOTE_MUTATION = gql`
+  mutation CreateNoteMutation($input: NoteInput!) {
+    createNote(input: $input) {
+      note {
+        id
+        createdAt
+        text
+      }
+    }
+  }
+`;
+
 class NoteFormWithState extends Component {
   render() {
     return (
-      <StateConsumer>
-        {appState => <NoteForm addNote={appState.addNote} />}
-      </StateConsumer>
+      <Mutation mutation={CREATE_NOTE_MUTATION}>
+        {createNoteBase => {
+          const createNote = input =>
+            createNoteBase({
+              variables: { input },
+              update: (store, { data: { createNote: createNoteResponse } }) => {
+                let notesQuery;
+                try {
+                  notesQuery = store.readQuery({ query: GET_NOTES_QUERY });
+                } catch (error) {
+                  // empty
+                }
+                if (notesQuery) {
+                  notesQuery.notes.push(createNoteResponse.note);
+                  store.writeQuery({
+                    query: GET_NOTES_QUERY,
+                    data: notesQuery,
+                  });
+                }
+              },
+            });
+          return <NoteForm onSubmit={createNote} />;
+        }}
+      </Mutation>
+    );
+  }
+}
+
+const UPDATE_NOTE_MUTATION = gql`
+  mutation UpdateNoteMutation($id: String!, $input: NoteInput!) {
+    updateNote(id: $id, input: $input) {
+      note {
+        id
+        createdAt
+        text
+      }
+    }
+  }
+`;
+
+export class NoteFormForEditting extends Component {
+  render() {
+    return (
+      <Mutation mutation={UPDATE_NOTE_MUTATION}>
+        {updateNoteBase => {
+          const updateNote = input =>
+            updateNoteBase({
+              variables: {
+                id: this.props.note.id,
+                input: { text: input.text },
+              },
+              optimisticResponse: {
+                __typename: 'Mutation',
+                updateNote: {
+                  __typename: 'UpdateNotePayload',
+                  note: {
+                    __typename: 'Note',
+                    id: this.props.note.id,
+                    createdAt: this.props.note.createdAt,
+                    text: input.text,
+                  },
+                },
+              },
+            });
+          return (
+            <NoteForm
+              buttonText="Save note"
+              note={this.props.note}
+              onSubmit={updateNote}
+            />
+          );
+        }}
+      </Mutation>
     );
   }
 }

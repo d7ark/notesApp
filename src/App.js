@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <div className="App container">
         <Switch>
-          <Route exact path="/notes/:noteId" component={NotePage} />
+          <Route path="/notes/:noteId" component={NotePage} />
           <Route exact path="/" component={NotesPage} />
         </Switch>
         <Modal />
