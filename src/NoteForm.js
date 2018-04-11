@@ -137,6 +137,7 @@ export class NoteFormForEditting extends Component {
                   note: {
                     __typename: 'Note',
                     id: this.props.note.id,
+                    createdAt: this.props.note.createdAt,
                     text: input.text,
                   },
                 },

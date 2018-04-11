@@ -1,3 +1,4 @@
+import Composer from 'react-composer';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
 import { Mutation, Query } from 'react-apollo';
@@ -31,20 +32,6 @@ class NotesPage extends Component {
   }
 }
 
-class NotesPageWithState extends React.Component {
-  render() {
-    return (
-      <Query query={GET_NOTES_QUERY}>
-        {({ loading, error, data }) => {
-          if (loading) return <p>loading ... </p>;
-          if (error) return <p>error occured</p>;
-          return <NotesPage notes={data.notes} {...this.props} />;
-        }}
-      </Query>
-    );
-  }
-}
-
 const DELETE_NOTE_MUTATION = gql`
   mutation DeleteNoteMutation($id: String!) {
     deleteNote(id: $id) {
@@ -53,11 +40,19 @@ const DELETE_NOTE_MUTATION = gql`
   }
 `;
 
-class NotesPageWithStateAndMutation extends React.Component {
+class NotesPageWithBonuses extends Component {
   render() {
     return (
-      <Mutation mutation={DELETE_NOTE_MUTATION}>
-        {deleteNoteBase => {
+      <Composer
+        components={[
+          ({ render }) => <Query query={GET_NOTES_QUERY} children={render} />,
+          ({ render }) => <Mutation mutation={DELETE_NOTE_MUTATION} children={render} />,
+        ]}
+      >
+        {([allNotesResult, deleteNoteBase]) => {
+          if (allNotesResult.loading) return <p>loading...</p>;
+          if (allNotesResult.error) return <p>error occured</p>;
+
           const deleteNote = input =>
             deleteNoteBase({
               variables: input,
@@ -79,11 +74,17 @@ class NotesPageWithStateAndMutation extends React.Component {
                 }
               },
             });
-          return <NotesPageWithState deleteNote={deleteNote} {...this.props} />;
+          return (
+            <NotesPage
+              notes={allNotesResult.data.notes}
+              deleteNote={deleteNote}
+              {...this.props}
+            />
+          );
         }}
-      </Mutation>
+      </Composer>
     );
   }
 }
 
-export default NotesPageWithStateAndMutation;
+export default NotesPageWithBonuses;
